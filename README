@@ -1,1 +1,5 @@
 This is RL implementation with Franka Emica Robot
+All robot description and visualization files are in franka_gazebo
+Moveit implementation is in franka_moveit
+To start an experiment first launch "roslaunch franka_gazebo panda_arm_hand.launch"
+Then start the script in the franka_rl/src "python training.py"
