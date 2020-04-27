@@ -1,0 +1,35 @@
+<robot name="box" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="default_inertial" params="mass">
+     <inertial>
+       <mass value="${mass}"/>
+       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+     </inertial>
+  </xacro:macro>
+  <link name="world"/>
+
+
+  <link name="table">
+  	<visual>
+  	<geometry>
+  		<mesh filename="package://franka_gazebo/meshes/visual/table_rl.stl" />
+  	</geometry>
+  	<origin xyz= "0 0 0" rpy="0 0 0"/>
+  	</visual>
+  	<collision>
+  		<geometry>
+  		<mesh filename="package://franka_gazebo/meshes/visual/table_rl.stl" />
+  		</geometry>
+  	<origin xyz= "0 0 0" rpy="0 0 0"/>
+  	</collision>
+  	<xacro:default_inertial mass="0.01"/>
+  </link>
+
+
+  <joint name="basetoworld" type="fixed">
+  	<parent link="world"/>
+  	<child link="table"/>
+  	<origin xyz= "0.772561 0.250738 0" rpy="0 0 1.57"/>
+  </joint>
+
+
+</robot>

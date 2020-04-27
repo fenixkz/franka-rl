@@ -1,0 +1,82 @@
+<launch>
+
+<arg name="world" default="empty"/>
+
+<arg name="paused" default="false" />
+
+<arg name="use_sim_time" default="true" />
+
+<arg name="gui" default="true" />
+
+<arg name="headless" default="false" />
+
+<arg name="debug" default="true" />
+
+<include file="$(find gazebo_ros)/launch/empty_world.launch">
+
+	<arg name="world_name" value="$(find gazebo_robot)/worlds/mybot.world" />
+
+	<arg name="debug" value="$(arg debug)" />
+
+	<arg name="gui" value="$(arg gui)" />
+
+	<arg name="paused" value="$(arg paused)" />
+
+	<arg name="use_sim_time" value="$(arg use_sim_time)" />
+
+	<arg name="headless" value="$(arg headless)" />
+
+</include>
+
+
+
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_gazebo)/robots/panda_arm_hand.urdf.xacro"/>
+
+	<node name="spawn" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model panda"/>
+
+	
+	<rosparam command="load" file="$(find franka_gazebo)/config/gripper_commands.yaml"/>
+	<!--	
+	<rosparam command="load" file="$(find franka_gazebo)/config/joint_states.yaml" ns="franka"/>
+	<rosparam command="load" file="$(find franka_gazebo)/config/joint_commands.yaml" ns="franka"/>
+	
+	<rosparam command="load" file="$(find franka_gazebo)/config/default.yaml"/> 
+	-->	
+	<rosparam command="load" file="$(find franka_gazebo)/config/joint_trajectory.yaml"/>
+
+	<!--<node name="franka_controller_spawner" pkg="controller_manager" type="spawner" args=
+		"franka/joint_state_controller
+		franka/joint1_position_controller
+		franka/joint2_position_controller
+		franka/joint3_position_controller
+		franka/joint4_position_controller
+		franka/joint5_position_controller
+		franka/joint6_position_controller
+		franka/joint7_position_controller
+		franka/gripper_position_controller
+		franka/panda_arm_controller
+		franka/hand_controller"/> 
+	-->
+	<node name="franka_controller_spawner" pkg="controller_manager" respawn="false" output="screen" type="spawner" ns="/franka" args=
+		"joint_state_controller
+		panda_arm_controller
+		gripper_position_controller
+		panda_joint7_controller"/>
+
+
+x
+  <param name="robot_description1" command="$(find xacro)/xacro.py '$(find franka_gazebo)/robots/table.xacro'"/>
+  <node name="urdf_spawner1" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model robot1 -param robot_description1" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" 
+
+	respawn="false" output="screen"> 
+
+  <remap from="/joint_states" to="/franka/joint_states"/> 
+  </node> 
+
+  <node pkg="franka_gazebo" type="gripper_publisher.py" name="gripper_publisher"/>
+  <include file="$(find franka_moveit)/launch/moveit_planning_execution.launch"/>
+  <node pkg="franka_rl" type="init" name="init"/>
+  <node pkg="franka_rl" type="check" name="check"/>
+</launch>
