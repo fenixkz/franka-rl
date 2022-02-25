@@ -12,9 +12,9 @@ The project has been implemented on Ubuntu 16.04 machine with ROS Kinetic. To ru
   - MoveIt
 
 ## Running
-'''
+```
 $ roslaunch franka_gazebo panda_arm_hand.launch
 $ cd franka_rl/src
 $ python training.py
-'''
+```
 
